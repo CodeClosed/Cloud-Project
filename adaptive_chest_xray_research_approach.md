@@ -62,10 +62,10 @@ The main idea is:
                                                   analysis based on
                                                   uncertainty
   ---------------------------------------------------------------------------
-
+# 3. Core Research Gap
 ------------------------------------------------------------------------
 
-# 3. Core Research Gap
+
 
 The three papers solve different parts of the chest X-ray analysis
 problem:
