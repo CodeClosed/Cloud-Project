@@ -1,0 +1,17 @@
+{
+    "step": 102,
+    "model_name": "Chest_Xray_EfficientNetB0",
+    "backbone_name": "efficientnetb0",
+    "target_layer_name": "top_conv",
+    "selection_reason": "top_conv is the final convolutional feature extraction layer in the EfficientNetB0 backbone before the classification head.",
+    "input_shape": [
+        224,
+        224,
+        3
+    ],
+    "class_names": [
+        "covid",
+        "normal",
+        "pneumonia"
+    ]
+}
