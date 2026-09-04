@@ -19,7 +19,7 @@ export function ConfidenceBadge({ category, confidence }: ConfidenceBadgeProps) 
       <span className={`h-2 w-2 rounded-full ${styles.dot}`} aria-hidden="true" />
       <span className="uppercase tracking-wider font-bold">{category} CONFIDENCE</span>
       <span className="text-zinc-400 dark:text-zinc-500 font-normal">|</span>
-      <span>{(confidence * 100).toFixed(1)}%</span>
+      <span>{(confidence * 100).toFixed(2)}%</span>
     </div>
   );
 }

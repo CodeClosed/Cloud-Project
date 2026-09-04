@@ -53,22 +53,15 @@ export function ResultsDashboard({
         </button>
       </div>
 
-      {/* Grid: Classification & Probability vs Segmentation & GradCAM */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Diagnostic Pillar */}
-        <div className="space-y-6">
-          <ClassificationResult data={result.classification} />
-          <ProbabilityChart
-            probabilities={result.classification.class_probabilities}
-            predictedClass={result.classification.predicted_class}
-          />
-        </div>
-
-        {/* Anatomical & Explainability Pillar */}
-        <div className="space-y-6">
-          <SegmentationResult data={result.segmentation} />
-          <GradCAMResult data={result.gradcam} />
-        </div>
+      {/* Balanced 2x2 Diagnostic & Metadata Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+        <ClassificationResult data={result.classification} />
+        <SegmentationResult data={result.segmentation} />
+        <ProbabilityChart
+          probabilities={result.classification.class_probabilities}
+          predictedClass={result.classification.predicted_class}
+        />
+        <GradCAMResult data={result.gradcam} />
       </div>
 
       {/* Full Width Visualizations Gallery */}

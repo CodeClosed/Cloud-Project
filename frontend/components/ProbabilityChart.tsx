@@ -1,7 +1,7 @@
 import React from "react";
 import { ClassProbabilities } from "@/lib/types";
 import { formatClassName } from "@/lib/utils";
-import { BarChart3 } from "lucide-react";
+import { BarChart3, Info } from "lucide-react";
 
 interface ProbabilityChartProps {
   probabilities: ClassProbabilities;
@@ -16,18 +16,19 @@ export function ProbabilityChart({ probabilities, predictedClass }: ProbabilityC
   ];
 
   return (
-    <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-6 shadow-sm">
-      <div className="flex items-center gap-2.5 border-b border-zinc-100 dark:border-zinc-800 pb-4">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-cyan-50 dark:bg-cyan-950/60 text-cyan-600 dark:text-cyan-400">
-          <BarChart3 className="h-5 w-5" />
+    <div className="h-full flex flex-col justify-between rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-6 shadow-sm">
+      <div>
+        <div className="flex items-center gap-2.5 border-b border-zinc-100 dark:border-zinc-800 pb-4">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-cyan-50 dark:bg-cyan-950/60 text-cyan-600 dark:text-cyan-400">
+            <BarChart3 className="h-5 w-5" />
+          </div>
+          <div>
+            <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+              Multi-Class Probability Distribution
+            </h3>
+            <span className="text-[11px] text-zinc-400">Softmax outputs across candidate categories</span>
+          </div>
         </div>
-        <div>
-          <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-            Multi-Class Probability Distribution
-          </h3>
-          <span className="text-[11px] text-zinc-400">Softmax outputs across candidate categories</span>
-        </div>
-      </div>
 
       <div className="mt-6 space-y-4">
         {classes.map((item) => {
@@ -71,6 +72,15 @@ export function ProbabilityChart({ probabilities, predictedClass }: ProbabilityC
             </div>
           );
         })}
+      </div>
+      </div>
+
+      <div className="mt-6 flex items-start gap-2.5 rounded-xl bg-cyan-500/5 dark:bg-cyan-950/20 border border-cyan-500/20 p-3 text-xs text-zinc-600 dark:text-zinc-400">
+        <Info className="h-4 w-4 text-cyan-500 shrink-0 mt-0.5" />
+        <p className="leading-relaxed">
+          <span className="font-semibold text-cyan-700 dark:text-cyan-300">Statistical Softmax: </span>
+          Normalized likelihood scores across candidate categories. Sums strictly to 100%.
+        </p>
       </div>
     </div>
   );

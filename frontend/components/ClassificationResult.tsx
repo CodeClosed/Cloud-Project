@@ -23,36 +23,50 @@ export function ClassificationResult({ data }: ClassificationResultProps) {
     }
   };
 
+  const getClassColor = (cls: string) => {
+    switch (cls.toLowerCase()) {
+      case "covid":
+        return "text-rose-600 dark:text-rose-400";
+      case "pneumonia":
+        return "text-amber-600 dark:text-amber-400";
+      case "normal":
+      default:
+        return "text-emerald-600 dark:text-emerald-400";
+    }
+  };
+
   return (
-    <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-6 shadow-sm">
-      <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-4">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400">
-            <Stethoscope className="h-5 w-5" />
+    <div className="h-full flex flex-col justify-between rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-6 shadow-sm">
+      <div>
+        <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400">
+              <Stethoscope className="h-5 w-5" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                Primary Diagnostic Prediction
+              </h3>
+              <span className="text-[11px] text-zinc-400">Model: EfficientNetB0 (Full-field X-ray)</span>
+            </div>
           </div>
+
+          <ConfidenceBadge category={data.confidence_category} confidence={data.confidence} />
+        </div>
+
+        <div className="mt-6 flex flex-col sm:flex-row sm:items-baseline justify-between gap-4">
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-              Primary Diagnostic Prediction
-            </h3>
-            <span className="text-[11px] text-zinc-400">Model: EfficientNetB0 (Full-field X-ray)</span>
+            <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Detected Condition</span>
+            <div className={`text-3xl sm:text-4xl font-black tracking-tight mt-0.5 ${getClassColor(data.predicted_class)}`}>
+              {formattedClass}
+            </div>
           </div>
-        </div>
 
-        <ConfidenceBadge category={data.confidence_category} confidence={data.confidence} />
-      </div>
-
-      <div className="mt-6 flex flex-col sm:flex-row sm:items-baseline justify-between gap-4">
-        <div>
-          <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Detected Condition</span>
-          <div className="text-3xl sm:text-4xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 mt-0.5">
-            {formattedClass}
-          </div>
-        </div>
-
-        <div className="sm:text-right">
-          <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Prediction Confidence</span>
-          <div className="text-2xl sm:text-3xl font-extrabold text-blue-600 dark:text-blue-400 mt-0.5">
-            {(data.confidence * 100).toFixed(2)}%
+          <div className="sm:text-right">
+            <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Prediction Confidence</span>
+            <div className={`text-2xl sm:text-3xl font-extrabold mt-0.5 ${getClassColor(data.predicted_class)}`}>
+              {(data.confidence * 100).toFixed(2)}%
+            </div>
           </div>
         </div>
       </div>
