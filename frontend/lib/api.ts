@@ -1,7 +1,23 @@
 import { PredictionResponse, HealthResponse } from "./types";
 
-const RAW_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
-export const API_BASE_URL = RAW_API_BASE_URL.replace(/\/+$/, "");
+/**
+ * Dynamically resolves the API base URL from user settings (localStorage) or environment variable.
+ */
+export function getApiBaseUrl(): string {
+  if (typeof window !== "undefined") {
+    try {
+      const raw = localStorage.getItem("cxray_app_settings");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed.apiUrl && typeof parsed.apiUrl === "string" && parsed.apiUrl.trim()) {
+          return parsed.apiUrl.trim().replace(/\/+$/, "");
+        }
+      }
+    } catch {}
+  }
+  const envUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
+  return envUrl.replace(/\/+$/, "");
+}
 
 /**
  * Constructs a fully qualified URL for visualizations served by the FastAPI backend.
@@ -11,8 +27,9 @@ export function getVisualizationUrl(path: string): string {
   if (path.startsWith("http://") || path.startsWith("https://")) {
     return path;
   }
+  const baseUrl = getApiBaseUrl();
   const cleanPath = path.startsWith("/") ? path : `/${path}`;
-  return `${API_BASE_URL}${cleanPath}`;
+  return `${baseUrl}${cleanPath}`;
 }
 
 /**
@@ -20,10 +37,11 @@ export function getVisualizationUrl(path: string): string {
  */
 export async function checkBackendHealth(): Promise<HealthResponse> {
   try {
+    const baseUrl = getApiBaseUrl();
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-    const response = await fetch(`${API_BASE_URL}/health`, {
+    const response = await fetch(`${baseUrl}/health`, {
       method: "GET",
       signal: controller.signal,
     });
@@ -71,7 +89,8 @@ export async function analyzeChestXray(file: File): Promise<PredictionResponse> 
     // 60-second timeout for model cold-starts / first inference
     const timeoutId = setTimeout(() => controller.abort(), 60000);
 
-    const response = await fetch(`${API_BASE_URL}/predict`, {
+    const baseUrl = getApiBaseUrl();
+    const response = await fetch(`${baseUrl}/predict`, {
       method: "POST",
       body: formData,
       signal: controller.signal,

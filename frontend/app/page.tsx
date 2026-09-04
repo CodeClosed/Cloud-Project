@@ -12,8 +12,18 @@ import { ErrorMessage } from "@/components/ErrorMessage";
 import { HowItWorks } from "@/components/HowItWorks";
 import { About } from "@/components/About";
 import { Footer } from "@/components/Footer";
+import { HistoryDrawer } from "@/components/HistoryDrawer";
+import { SettingsModal } from "@/components/SettingsModal";
 import { analyzeChestXray } from "@/lib/api";
 import { PredictionResult } from "@/lib/types";
+import { 
+  getStoredHistory, 
+  saveToHistory, 
+  getStoredSettings, 
+  AppSettings, 
+  DEFAULT_SETTINGS, 
+  HistoryItem 
+} from "@/lib/storage";
 
 export default function Home() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -21,6 +31,18 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [result, setResult] = useState<PredictionResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // History and Settings state
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [historyItems, setHistoryItems] = useState<HistoryItem[]>([]);
+  const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
+
+  // Load history and settings from browser storage on mount
+  useEffect(() => {
+    setHistoryItems(getStoredHistory());
+    setSettings(getStoredSettings());
+  }, []);
 
   // Clean up object URLs when preview changes or unmounts
   useEffect(() => {
@@ -52,6 +74,14 @@ export default function Home() {
     setError(null);
   }, [previewUrl]);
 
+  const handleSelectHistoryScan = (item: HistoryItem) => {
+    setResult(item.result);
+    setPreviewUrl(item.previewUrl || null);
+    setSelectedFile(null);
+    setError(null);
+    window.scrollTo({ top: 400, behavior: "smooth" });
+  };
+
   const handleAnalyze = async () => {
     if (!selectedFile) {
       setError("Please select a chest X-ray image first.");
@@ -64,6 +94,17 @@ export default function Home() {
     try {
       const response = await analyzeChestXray(selectedFile);
       setResult(response.result);
+
+      // Auto-save to local history if enabled
+      if (settings.autoSaveHistory) {
+        saveToHistory({
+          filename: selectedFile.name,
+          previewUrl: previewUrl || undefined,
+          result: response.result,
+        });
+        setHistoryItems(getStoredHistory());
+      }
+
       // Scroll smoothly to results
       window.scrollTo({ top: 400, behavior: "smooth" });
     } catch (err) {
@@ -79,7 +120,12 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col bg-zinc-50 dark:bg-black text-zinc-900 dark:text-zinc-50">
-      <Header onReset={handleReset} />
+      <Header 
+        onReset={handleReset} 
+        onOpenHistory={() => setIsHistoryOpen(true)}
+        onOpenSettings={() => setIsSettingsOpen(true)}
+        historyCount={historyItems.length}
+      />
 
       <main className="flex-1">
         <Hero />
@@ -147,6 +193,22 @@ export default function Home() {
       </main>
 
       <Footer />
+
+      <HistoryDrawer
+        isOpen={isHistoryOpen}
+        onClose={() => setIsHistoryOpen(false)}
+        items={historyItems}
+        onSelectScan={handleSelectHistoryScan}
+        onRefreshHistory={() => setHistoryItems(getStoredHistory())}
+      />
+
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        settings={settings}
+        onSettingsChange={(newSettings) => setSettings(newSettings)}
+        onHistoryCleared={() => setHistoryItems([])}
+      />
     </div>
   );
 }
