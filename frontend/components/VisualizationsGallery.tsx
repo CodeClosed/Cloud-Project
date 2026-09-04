@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { VisualizationsResult } from "@/lib/types";
 import { getVisualizationUrl } from "@/lib/api";
 import { ExternalLink, Layers, Eye, Sparkles, Download, Check, ArrowDownToLine } from "lucide-react";
+import { downloadImageToLaptop } from "@/lib/download";
 
 interface VisualizationsGalleryProps {
   originalPreviewUrl: string;
@@ -35,27 +36,11 @@ export function VisualizationsGallery({
     if (!url) return;
     setDownloadingId(id);
     try {
-      const response = await fetch(url);
-      const blob = await response.blob();
-      const blobUrl = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = blobUrl;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      setTimeout(() => URL.revokeObjectURL(blobUrl), 150);
-    } catch {
-      // Fallback direct link
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      a.target = "_blank";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      await downloadImageToLaptop(url, filename);
+    } catch (err) {
+      console.error("Failed to download image:", err);
     } finally {
-      setTimeout(() => setDownloadingId(null), 1000);
+      setTimeout(() => setDownloadingId(null), 1200);
     }
   };
 

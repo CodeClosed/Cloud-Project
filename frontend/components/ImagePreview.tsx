@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
-import { X, FileText, CheckCircle2, Download } from "lucide-react";
+import React, { useState } from "react";
+import { X, FileText, CheckCircle2, Download, Check } from "lucide-react";
+import { downloadImageToLaptop } from "@/lib/download";
 
 interface ImagePreviewProps {
   file: File;
@@ -11,11 +12,19 @@ interface ImagePreviewProps {
 }
 
 export function ImagePreview({ file, previewUrl, onRemove, disabled = false }: ImagePreviewProps) {
+  const [downloaded, setDownloaded] = useState(false);
+
   const formatFileSize = (bytes: number) => {
     if (bytes < 1024 * 1024) {
       return `${(bytes / 1024).toFixed(1)} KB`;
     }
     return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+  };
+
+  const handleDownload = async () => {
+    setDownloaded(true);
+    await downloadImageToLaptop(previewUrl, file.name || "chest_xray_preview.png");
+    setTimeout(() => setDownloaded(false), 1500);
   };
 
   return (
@@ -53,15 +62,19 @@ export function ImagePreview({ file, previewUrl, onRemove, disabled = false }: I
           </div>
 
           <div className="mt-4 flex items-center justify-center sm:justify-start gap-3">
-            <a
-              href={previewUrl}
-              download={file.name || "chest_xray.png"}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-1.5 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700/60 transition-colors"
-              title="Download selected image"
+            <button
+              type="button"
+              onClick={handleDownload}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-1.5 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700/60 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+              title="Download selected image directly to laptop"
             >
-              <Download className="h-3.5 w-3.5" />
-              <span>Download</span>
-            </a>
+              {downloaded ? (
+                <Check className="h-3.5 w-3.5 text-emerald-500" />
+              ) : (
+                <Download className="h-3.5 w-3.5" />
+              )}
+              <span>{downloaded ? "Downloaded" : "Download"}</span>
+            </button>
             <button
               onClick={onRemove}
               disabled={disabled}
