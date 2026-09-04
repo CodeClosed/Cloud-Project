@@ -253,6 +253,11 @@ async def predict_chest_xray(
         # ---------------------------------------------------------------------
         request_id = str(uuid.uuid4())
 
+        # Save a persistent copy of the input image so it is always accessible via URL
+        original_vis_filename = f"{request_id}_original.png"
+        original_vis_path = VISUALIZATIONS_DIR / original_vis_filename
+        cv2.imwrite(str(original_vis_path), test_img)
+
         result = analyze_chest_xray(
             str(temp_path),
             output_dir=VISUALIZATIONS_DIR,
@@ -299,6 +304,7 @@ async def predict_chest_xray(
                     heatmap_shape=list(safe_result["gradcam"]["heatmap_shape"])
                 ),
                 visualizations=VisualizationsResult(
+                    original_image_url=f"/visualizations/{original_vis_filename}",
                     gradcam_overlay_url=safe_result["visualizations"]["gradcam_overlay_url"],
                     segmentation_overlay_url=safe_result["visualizations"]["segmentation_overlay_url"]
                 )

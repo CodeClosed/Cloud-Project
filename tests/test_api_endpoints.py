@@ -103,6 +103,7 @@ def test_predict_valid_sample_image():
     vis = res["visualizations"]
     assert vis["gradcam_overlay_url"].startswith("/visualizations/")
     assert vis["segmentation_overlay_url"].startswith("/visualizations/")
+    assert vis["original_image_url"].startswith("/visualizations/")
 
     # Test static file retrieval
     gradcam_res = client.get(vis["gradcam_overlay_url"])
@@ -112,3 +113,7 @@ def test_predict_valid_sample_image():
     seg_res = client.get(vis["segmentation_overlay_url"])
     assert seg_res.status_code == 200
     assert seg_res.headers["content-type"] in ["image/png", "application/octet-stream"]
+
+    orig_res = client.get(vis["original_image_url"])
+    assert orig_res.status_code == 200
+    assert orig_res.headers["content-type"] in ["image/png", "application/octet-stream"]

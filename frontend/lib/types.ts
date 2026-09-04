@@ -39,6 +39,7 @@ export interface GradCamResult {
 }
 
 export interface VisualizationsResult {
+  original_image_url?: string;
   gradcam_overlay_url: string;
   segmentation_overlay_url: string;
 }

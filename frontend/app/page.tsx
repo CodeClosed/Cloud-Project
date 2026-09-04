@@ -14,7 +14,7 @@ import { About } from "@/components/About";
 import { Footer } from "@/components/Footer";
 import { HistoryDrawer } from "@/components/HistoryDrawer";
 import { SettingsModal } from "@/components/SettingsModal";
-import { analyzeChestXray } from "@/lib/api";
+import { analyzeChestXray, getVisualizationUrl } from "@/lib/api";
 import { PredictionResult } from "@/lib/types";
 import { 
   getStoredHistory, 
@@ -44,39 +44,44 @@ export default function Home() {
     setSettings(getStoredSettings());
   }, []);
 
-  // Clean up object URLs when preview changes or unmounts
-  useEffect(() => {
-    return () => {
-      if (previewUrl && previewUrl.startsWith("blob:")) {
-        URL.revokeObjectURL(previewUrl);
+  const handleFileSelect = (file: File) => {
+    setSelectedFile(file);
+    setError(null);
+    
+    // Immediate preview for instantaneous feedback
+    const objectUrl = URL.createObjectURL(file);
+    setPreviewUrl(objectUrl);
+
+    // Also read as permanent base64 Data URL for persistent history retention
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (e.target?.result) {
+        setPreviewUrl(e.target.result as string);
       }
     };
-  }, [previewUrl]);
-
-  const handleFileSelect = (file: File) => {
-    if (previewUrl && previewUrl.startsWith("blob:")) {
-      URL.revokeObjectURL(previewUrl);
-    }
-    setSelectedFile(file);
-    const url = URL.createObjectURL(file);
-    setPreviewUrl(url);
-    setError(null);
+    reader.readAsDataURL(file);
   };
 
   const handleReset = useCallback(() => {
-    if (previewUrl && previewUrl.startsWith("blob:")) {
-      URL.revokeObjectURL(previewUrl);
-    }
     setSelectedFile(null);
     setPreviewUrl(null);
     setIsLoading(false);
     setResult(null);
     setError(null);
-  }, [previewUrl]);
+  }, []);
 
   const handleSelectHistoryScan = (item: HistoryItem) => {
     setResult(item.result);
-    setPreviewUrl(item.previewUrl || null);
+    // Resolve permanent image URL: prefer stored Data URL or backend original_image_url
+    const backendOriginal = item.result.visualizations.original_image_url
+      ? getVisualizationUrl(item.result.visualizations.original_image_url)
+      : "";
+    
+    // If item.previewUrl is a dead blob URL, use the backend URL
+    const isDeadBlob = item.previewUrl && item.previewUrl.startsWith("blob:");
+    const finalOriginalUrl = (!isDeadBlob && item.previewUrl) ? item.previewUrl : backendOriginal;
+
+    setPreviewUrl(finalOriginalUrl || null);
     setSelectedFile(null);
     setError(null);
     window.scrollTo({ top: 400, behavior: "smooth" });
@@ -95,11 +100,18 @@ export default function Home() {
       const response = await analyzeChestXray(selectedFile);
       setResult(response.result);
 
+      // Determine permanent URL for the original image
+      const backendUrl = response.result.visualizations.original_image_url
+        ? getVisualizationUrl(response.result.visualizations.original_image_url)
+        : "";
+      const isBlob = previewUrl && previewUrl.startsWith("blob:");
+      const permanentPreview = (!isBlob && previewUrl) ? previewUrl : backendUrl;
+
       // Auto-save to local history if enabled
       if (settings.autoSaveHistory) {
         saveToHistory({
           filename: selectedFile.name,
-          previewUrl: previewUrl || undefined,
+          previewUrl: permanentPreview || undefined,
           result: response.result,
         });
         setHistoryItems(getStoredHistory());

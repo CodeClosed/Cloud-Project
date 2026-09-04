@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from pydantic import BaseModel, Field
 
 class DictAccessibleModel(BaseModel):
@@ -43,6 +43,7 @@ class GradCamResult(DictAccessibleModel):
     heatmap_shape: List[int] = Field(..., description="Spatial resolution of computed gradient heatmap")
 
 class VisualizationsResult(DictAccessibleModel):
+    original_image_url: Optional[str] = Field(default=None, description="Relative URL path to saved input radiograph PNG")
     gradcam_overlay_url: str = Field(..., description="Relative URL path to generated Grad-CAM overlay PNG")
     segmentation_overlay_url: str = Field(..., description="Relative URL path to generated lung segmentation overlay PNG")
 

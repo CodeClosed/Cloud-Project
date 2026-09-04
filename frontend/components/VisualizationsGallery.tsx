@@ -20,6 +20,15 @@ export function VisualizationsGallery({
 
   const gradcamUrl = getVisualizationUrl(visualizations.gradcam_overlay_url);
   const segmentationUrl = getVisualizationUrl(visualizations.segmentation_overlay_url);
+  const backendOriginalUrl = visualizations.original_image_url
+    ? getVisualizationUrl(visualizations.original_image_url)
+    : "";
+
+  const [originalSrc, setOriginalSrc] = useState<string>(originalPreviewUrl || backendOriginalUrl);
+
+  React.useEffect(() => {
+    setOriginalSrc(originalPreviewUrl || backendOriginalUrl);
+  }, [originalPreviewUrl, backendOriginalUrl]);
 
   return (
     <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-6 shadow-sm">
@@ -71,6 +80,7 @@ export function VisualizationsGallery({
         </div>
       </div>
 
+      {/* Grid: All (3 Cards) or Filtered (2 Cards) */}
       <div className={`mt-6 grid gap-6 ${
         activeTab === "all" ? "grid-cols-1 md:grid-cols-3" : "grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto"
       }`}>
@@ -81,14 +91,31 @@ export function VisualizationsGallery({
               <Eye className="h-3.5 w-3.5 text-blue-500" />
               1. Original Radiograph
             </span>
-            <span className="text-[10px] text-zinc-400 font-mono">Input</span>
+            {originalSrc ? (
+              <a
+                href={originalSrc}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                <span>Full PNG</span>
+                <ExternalLink className="h-3 w-3" />
+              </a>
+            ) : (
+              <span className="text-[10px] text-zinc-400 font-mono">Input</span>
+            )}
           </div>
 
           <div className="relative aspect-square w-full bg-black flex items-center justify-center overflow-hidden group">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={originalPreviewUrl}
+              src={originalSrc || backendOriginalUrl}
               alt="Original Chest Radiograph"
+              onError={() => {
+                if (backendOriginalUrl && originalSrc !== backendOriginalUrl) {
+                  setOriginalSrc(backendOriginalUrl);
+                }
+              }}
               className="h-full w-full object-contain"
             />
           </div>
