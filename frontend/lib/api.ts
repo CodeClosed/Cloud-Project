@@ -1,20 +1,9 @@
 import { PredictionResponse, HealthResponse } from "./types";
 
 /**
- * Dynamically resolves the API base URL from user settings (localStorage) or environment variable.
+ * Resolves the API base URL from the environment variable or defaults to local server.
  */
 export function getApiBaseUrl(): string {
-  if (typeof window !== "undefined") {
-    try {
-      const raw = localStorage.getItem("cxray_app_settings");
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (parsed.apiUrl && typeof parsed.apiUrl === "string" && parsed.apiUrl.trim()) {
-          return parsed.apiUrl.trim().replace(/\/+$/, "");
-        }
-      }
-    } catch {}
-  }
   const envUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
   return envUrl.replace(/\/+$/, "");
 }

@@ -6,22 +6,19 @@ import {
   CheckCircle2, 
   AlertCircle, 
   RefreshCw, 
-  History as HistoryIcon, 
-  Settings as SettingsIcon 
+  History as HistoryIcon 
 } from "lucide-react";
 import { checkBackendHealth } from "@/lib/api";
 
 interface HeaderProps {
   onReset?: () => void;
   onOpenHistory?: () => void;
-  onOpenSettings?: () => void;
   historyCount?: number;
 }
 
 export function Header({ 
   onReset, 
   onOpenHistory, 
-  onOpenSettings, 
   historyCount = 0 
 }: HeaderProps) {
   const [backendStatus, setBackendStatus] = useState<"checking" | "online" | "offline">("checking");
@@ -92,17 +89,6 @@ export function Header({
                   {historyCount}
                 </span>
               )}
-            </button>
-          )}
-
-          {/* Settings Modal Trigger */}
-          {onOpenSettings && (
-            <button
-              onClick={onOpenSettings}
-              className="p-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400 hover:border-zinc-300 dark:hover:border-zinc-700 shadow-sm transition-all"
-              title="Settings"
-            >
-              <SettingsIcon className="h-4 w-4" />
             </button>
           )}
 

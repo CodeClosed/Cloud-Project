@@ -13,15 +13,11 @@ import { HowItWorks } from "@/components/HowItWorks";
 import { About } from "@/components/About";
 import { Footer } from "@/components/Footer";
 import { HistoryDrawer } from "@/components/HistoryDrawer";
-import { SettingsModal } from "@/components/SettingsModal";
 import { analyzeChestXray, getVisualizationUrl } from "@/lib/api";
 import { PredictionResult } from "@/lib/types";
 import { 
   getStoredHistory, 
   saveToHistory, 
-  getStoredSettings, 
-  AppSettings, 
-  DEFAULT_SETTINGS, 
   HistoryItem 
 } from "@/lib/storage";
 
@@ -32,16 +28,13 @@ export default function Home() {
   const [result, setResult] = useState<PredictionResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // History and Settings state
+  // History state
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [historyItems, setHistoryItems] = useState<HistoryItem[]>([]);
-  const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
 
-  // Load history and settings from browser storage on mount
+  // Load history from browser storage on mount
   useEffect(() => {
     setHistoryItems(getStoredHistory());
-    setSettings(getStoredSettings());
   }, []);
 
   const handleFileSelect = (file: File) => {
@@ -107,15 +100,13 @@ export default function Home() {
       const isBlob = previewUrl && previewUrl.startsWith("blob:");
       const permanentPreview = (!isBlob && previewUrl) ? previewUrl : backendUrl;
 
-      // Auto-save to local history if enabled
-      if (settings.autoSaveHistory) {
-        saveToHistory({
-          filename: selectedFile.name,
-          previewUrl: permanentPreview || undefined,
-          result: response.result,
-        });
-        setHistoryItems(getStoredHistory());
-      }
+      // Auto-save to local history
+      saveToHistory({
+        filename: selectedFile.name,
+        previewUrl: permanentPreview || undefined,
+        result: response.result,
+      });
+      setHistoryItems(getStoredHistory());
 
       // Scroll smoothly to results
       window.scrollTo({ top: 400, behavior: "smooth" });
@@ -135,7 +126,6 @@ export default function Home() {
       <Header 
         onReset={handleReset} 
         onOpenHistory={() => setIsHistoryOpen(true)}
-        onOpenSettings={() => setIsSettingsOpen(true)}
         historyCount={historyItems.length}
       />
 
@@ -212,14 +202,6 @@ export default function Home() {
         items={historyItems}
         onSelectScan={handleSelectHistoryScan}
         onRefreshHistory={() => setHistoryItems(getStoredHistory())}
-      />
-
-      <SettingsModal
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
-        settings={settings}
-        onSettingsChange={(newSettings) => setSettings(newSettings)}
-        onHistoryCleared={() => setHistoryItems([])}
       />
     </div>
   );

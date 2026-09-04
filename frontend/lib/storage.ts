@@ -10,24 +10,7 @@ export interface HistoryItem {
   triage?: "routine" | "urgent" | "critical";
 }
 
-export interface AppSettings {
-  apiUrl: string;
-  autoSaveHistory: boolean;
-  theme: "system" | "light" | "dark";
-  defaultVisualizer: "gradcam" | "segmentation" | "original";
-  highConfidenceThreshold: number; // e.g. 90%
-}
-
-export const DEFAULT_SETTINGS: AppSettings = {
-  apiUrl: process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000",
-  autoSaveHistory: true,
-  theme: "system",
-  defaultVisualizer: "gradcam",
-  highConfidenceThreshold: 90,
-};
-
 const HISTORY_STORAGE_KEY = "cxray_analysis_history";
-const SETTINGS_STORAGE_KEY = "cxray_app_settings";
 
 /**
  * Retrieve saved scan history from browser storage
@@ -100,32 +83,3 @@ export function clearAllHistory(): void {
   }
 }
 
-/**
- * Retrieve app settings
- */
-export function getStoredSettings(): AppSettings {
-  if (typeof window === "undefined") return DEFAULT_SETTINGS;
-  try {
-    const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
-    if (!raw) return DEFAULT_SETTINGS;
-    return { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
-  } catch (err) {
-    console.error("Failed to load settings:", err);
-    return DEFAULT_SETTINGS;
-  }
-}
-
-/**
- * Save updated app settings
- */
-export function saveStoredSettings(newSettings: Partial<AppSettings>): AppSettings {
-  const current = getStoredSettings();
-  const merged: AppSettings = { ...current, ...newSettings };
-  if (typeof window === "undefined") return merged;
-  try {
-    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(merged));
-  } catch (err) {
-    console.error("Failed to save settings:", err);
-  }
-  return merged;
-}
