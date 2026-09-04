@@ -149,31 +149,17 @@ export function VisualizationsGallery({
               <Eye className="h-3.5 w-3.5 text-blue-500" />
               1. Original Radiograph
             </span>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => handleDownload(originalSrc || backendOriginalUrl, "chest_xray_original.png", "orig")}
-                className="inline-flex items-center gap-1 rounded-md bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-2 py-0.5 text-[11px] font-semibold text-zinc-700 dark:text-zinc-200 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-300 transition-colors shadow-2xs"
-                title="Download original radiograph"
+            {originalSrc && (
+              <a
+                href={originalSrc}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 text-[11px] font-semibold text-zinc-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                title="Open full size in new tab"
               >
-                {downloadingId === "orig" ? (
-                  <Check className="h-3 w-3 text-emerald-500" />
-                ) : (
-                  <Download className="h-3 w-3" />
-                )}
-                <span>Download</span>
-              </button>
-              {originalSrc && (
-                <a
-                  href={originalSrc}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-zinc-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                  title="Open in new tab"
-                >
-                  <ExternalLink className="h-3 w-3" />
-                </a>
-              )}
-            </div>
+                <ExternalLink className="h-3 w-3" />
+              </a>
+            )}
           </div>
 
           <div className="relative aspect-square w-full bg-black flex items-center justify-center overflow-hidden group">
@@ -191,10 +177,14 @@ export function VisualizationsGallery({
             {/* Quick hover download button */}
             <button
               onClick={() => handleDownload(originalSrc || backendOriginalUrl, "chest_xray_original.png", "orig")}
-              className="absolute bottom-3 right-3 p-2 rounded-xl bg-black/70 hover:bg-black text-white backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
-              title="Download image"
+              className="absolute bottom-3 right-3 p-2.5 rounded-xl bg-black/75 hover:bg-black text-white backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all shadow-lg cursor-pointer hover:scale-105 active:scale-95"
+              title="Download original radiograph"
             >
-              <Download className="h-4 w-4" />
+              {downloadingId === "orig" ? (
+                <Check className="h-4 w-4 text-emerald-400" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
             </button>
           </div>
 
@@ -213,29 +203,15 @@ export function VisualizationsGallery({
                 <Layers className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                 2. Lung Segmentation
               </span>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => handleDownload(segmentationUrl, "chest_xray_lung_segmentation.png", "seg")}
-                  className="inline-flex items-center gap-1 rounded-md bg-white dark:bg-zinc-800 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 transition-colors shadow-2xs"
-                  title="Download segmentation overlay"
-                >
-                  {downloadingId === "seg" ? (
-                    <Check className="h-3 w-3 text-emerald-500" />
-                  ) : (
-                    <Download className="h-3 w-3" />
-                  )}
-                  <span>Download</span>
-                </button>
-                <a
-                  href={segmentationUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
-                  title="Open in new tab"
-                >
-                  <ExternalLink className="h-3 w-3" />
-                </a>
-              </div>
+              <a
+                href={segmentationUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
+                title="Open full size in new tab"
+              >
+                <ExternalLink className="h-3 w-3" />
+              </a>
             </div>
 
             <div className="relative aspect-square w-full bg-black flex items-center justify-center overflow-hidden group">
@@ -248,10 +224,14 @@ export function VisualizationsGallery({
               {/* Quick hover download button */}
               <button
                 onClick={() => handleDownload(segmentationUrl, "chest_xray_lung_segmentation.png", "seg")}
-                className="absolute bottom-3 right-3 p-2 rounded-xl bg-black/70 hover:bg-black text-white backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                className="absolute bottom-3 right-3 p-2.5 rounded-xl bg-black/75 hover:bg-black text-white backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all shadow-lg cursor-pointer hover:scale-105 active:scale-95"
                 title="Download segmentation overlay"
               >
-                <Download className="h-4 w-4" />
+                {downloadingId === "seg" ? (
+                  <Check className="h-4 w-4 text-emerald-400" />
+                ) : (
+                  <Download className="h-4 w-4" />
+                )}
               </button>
             </div>
 
@@ -271,29 +251,15 @@ export function VisualizationsGallery({
                 <Sparkles className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400" />
                 3. Grad-CAM Explainability
               </span>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => handleDownload(gradcamUrl, `chest_xray_gradcam_${predictedClass}.png`, "cam")}
-                  className="inline-flex items-center gap-1 rounded-md bg-white dark:bg-zinc-800 border border-purple-200 dark:border-purple-800 px-2 py-0.5 text-[11px] font-semibold text-purple-700 dark:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-950/50 transition-colors shadow-2xs"
-                  title="Download Grad-CAM overlay"
-                >
-                  {downloadingId === "cam" ? (
-                    <Check className="h-3 w-3 text-emerald-500" />
-                  ) : (
-                    <Download className="h-3 w-3" />
-                  )}
-                  <span>Download</span>
-                </button>
-                <a
-                  href={gradcamUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-purple-600 dark:text-purple-400 hover:underline"
-                  title="Open in new tab"
-                >
-                  <ExternalLink className="h-3 w-3" />
-                </a>
-              </div>
+              <a
+                href={gradcamUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 text-[11px] font-semibold text-purple-600 dark:text-purple-400 hover:underline"
+                title="Open full size in new tab"
+              >
+                <ExternalLink className="h-3 w-3" />
+              </a>
             </div>
 
             <div className="relative aspect-square w-full bg-black flex items-center justify-center overflow-hidden group">
@@ -306,10 +272,14 @@ export function VisualizationsGallery({
               {/* Quick hover download button */}
               <button
                 onClick={() => handleDownload(gradcamUrl, `chest_xray_gradcam_${predictedClass}.png`, "cam")}
-                className="absolute bottom-3 right-3 p-2 rounded-xl bg-black/70 hover:bg-black text-white backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                className="absolute bottom-3 right-3 p-2.5 rounded-xl bg-black/75 hover:bg-black text-white backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all shadow-lg cursor-pointer hover:scale-105 active:scale-95"
                 title="Download Grad-CAM overlay"
               >
-                <Download className="h-4 w-4" />
+                {downloadingId === "cam" ? (
+                  <Check className="h-4 w-4 text-emerald-400" />
+                ) : (
+                  <Download className="h-4 w-4" />
+                )}
               </button>
             </div>
 
