@@ -9,13 +9,24 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.pyc
+.pytest_cache/
 
 # Temporary Uploads (keep folder via .gitkeep)
 api/temp_uploads/*
 !api/temp_uploads/.gitkeep
 
+# Runtime Generated Visualizations
+generated_visualizations/*
+!generated_visualizations/.gitkeep
+
 # Temporary Test Outputs
 test_outputs/
+
+# Frontend dependencies and builds
+frontend/node_modules/
+frontend/.next/
+frontend/.env.local
+frontend/.env.*.local
 
 # OS Specific
 .DS_Store

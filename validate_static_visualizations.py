@@ -20,7 +20,9 @@ from main import predict_chest_xray as api_predict, VISUALIZATIONS_DIR
 from unified_inference import analyze_chest_xray
 
 def test_static_visualizations():
-    sample_image_path = Path("c:/Users/vihaa/OneDrive/Desktop/0a7faa2a.png")
+    sample_image_path = PROJECT_ROOT / "0a7faa2a.png"
+    if not sample_image_path.exists():
+        sample_image_path = Path("c:/Users/vihaa/OneDrive/Desktop/0a7faa2a.png")
     assert sample_image_path.exists(), f"Sample image not found: {sample_image_path}"
 
     print("=" * 70)
