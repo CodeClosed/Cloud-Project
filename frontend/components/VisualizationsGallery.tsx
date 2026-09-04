@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { VisualizationsResult } from "@/lib/types";
 import { getVisualizationUrl } from "@/lib/api";
-import { ExternalLink, Layers, Eye, Sparkles } from "lucide-react";
+import { ExternalLink, Layers, Eye, Sparkles, Download, Check, ArrowDownToLine } from "lucide-react";
 
 interface VisualizationsGalleryProps {
   originalPreviewUrl: string;
@@ -17,6 +17,7 @@ export function VisualizationsGallery({
   predictedClass,
 }: VisualizationsGalleryProps) {
   const [activeTab, setActiveTab] = useState<"all" | "segmentation" | "gradcam">("all");
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
   const gradcamUrl = getVisualizationUrl(visualizations.gradcam_overlay_url);
   const segmentationUrl = getVisualizationUrl(visualizations.segmentation_overlay_url);
@@ -30,6 +31,51 @@ export function VisualizationsGallery({
     setOriginalSrc(originalPreviewUrl || backendOriginalUrl);
   }, [originalPreviewUrl, backendOriginalUrl]);
 
+  const handleDownload = async (url: string, filename: string, id: string) => {
+    if (!url) return;
+    setDownloadingId(id);
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 150);
+    } catch {
+      // Fallback direct link
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.target = "_blank";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } finally {
+      setTimeout(() => setDownloadingId(null), 1000);
+    }
+  };
+
+  const handleDownloadAll = async () => {
+    const items = [
+      { url: originalSrc || backendOriginalUrl, name: "chest_xray_original.png", id: "all_orig" },
+      { url: segmentationUrl, name: "chest_xray_segmentation.png", id: "all_seg" },
+      { url: gradcamUrl, name: `chest_xray_gradcam_${predictedClass}.png`, id: "all_cam" },
+    ];
+    setDownloadingId("all");
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].url) {
+        await handleDownload(items[i].url, items[i].name, items[i].id);
+        // Small delay between programmatic downloads
+        await new Promise((resolve) => setTimeout(resolve, 300));
+      }
+    }
+    setDownloadingId(null);
+  };
+
   return (
     <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-6 shadow-sm">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-100 dark:border-zinc-800 pb-4">
@@ -41,42 +87,59 @@ export function VisualizationsGallery({
             <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
               Comparative Visualizations
             </h3>
-            <span className="text-[11px] text-zinc-400">Side-by-side radiographic inspection & overlays</span>
+            <span className="text-[11px] text-zinc-400">Side-by-side radiographic inspection &amp; overlays</span>
           </div>
         </div>
 
-        {/* Filter / View Tabs */}
-        <div className="flex items-center rounded-xl bg-zinc-100 dark:bg-zinc-800 p-1 text-xs font-semibold">
+        {/* Action Controls: Download All & Filter Tabs */}
+        <div className="flex flex-wrap items-center gap-3">
           <button
-            onClick={() => setActiveTab("all")}
-            className={`rounded-lg px-3 py-1.5 transition-colors ${
-              activeTab === "all"
-                ? "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-sm"
-                : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900"
-            }`}
+            onClick={handleDownloadAll}
+            disabled={downloadingId === "all"}
+            className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-200 shadow-sm hover:border-blue-300 dark:hover:border-blue-700 hover:text-blue-600 dark:hover:text-blue-400 transition-all"
+            title="Download all 3 images"
           >
-            All (3 Views)
+            {downloadingId === "all" ? (
+              <Check className="h-3.5 w-3.5 text-emerald-500" />
+            ) : (
+              <ArrowDownToLine className="h-3.5 w-3.5 text-blue-500" />
+            )}
+            <span>{downloadingId === "all" ? "Downloading..." : "Download All (3)"}</span>
           </button>
-          <button
-            onClick={() => setActiveTab("segmentation")}
-            className={`rounded-lg px-3 py-1.5 transition-colors ${
-              activeTab === "segmentation"
-                ? "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-sm"
-                : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900"
-            }`}
-          >
-            Segmentation
-          </button>
-          <button
-            onClick={() => setActiveTab("gradcam")}
-            className={`rounded-lg px-3 py-1.5 transition-colors ${
-              activeTab === "gradcam"
-                ? "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-sm"
-                : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900"
-            }`}
-          >
-            Grad-CAM
-          </button>
+
+          {/* Filter / View Tabs */}
+          <div className="flex items-center rounded-xl bg-zinc-100 dark:bg-zinc-800 p-1 text-xs font-semibold">
+            <button
+              onClick={() => setActiveTab("all")}
+              className={`rounded-lg px-3 py-1.5 transition-colors ${
+                activeTab === "all"
+                  ? "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-sm"
+                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900"
+              }`}
+            >
+              All (3 Views)
+            </button>
+            <button
+              onClick={() => setActiveTab("segmentation")}
+              className={`rounded-lg px-3 py-1.5 transition-colors ${
+                activeTab === "segmentation"
+                  ? "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-sm"
+                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900"
+              }`}
+            >
+              Segmentation
+            </button>
+            <button
+              onClick={() => setActiveTab("gradcam")}
+              className={`rounded-lg px-3 py-1.5 transition-colors ${
+                activeTab === "gradcam"
+                  ? "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-sm"
+                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900"
+              }`}
+            >
+              Grad-CAM
+            </button>
+          </div>
         </div>
       </div>
 
@@ -91,19 +154,31 @@ export function VisualizationsGallery({
               <Eye className="h-3.5 w-3.5 text-blue-500" />
               1. Original Radiograph
             </span>
-            {originalSrc ? (
-              <a
-                href={originalSrc}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-600 dark:text-blue-400 hover:underline"
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => handleDownload(originalSrc || backendOriginalUrl, "chest_xray_original.png", "orig")}
+                className="inline-flex items-center gap-1 rounded-md bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-2 py-0.5 text-[11px] font-semibold text-zinc-700 dark:text-zinc-200 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-300 transition-colors shadow-2xs"
+                title="Download original radiograph"
               >
-                <span>Full PNG</span>
-                <ExternalLink className="h-3 w-3" />
-              </a>
-            ) : (
-              <span className="text-[10px] text-zinc-400 font-mono">Input</span>
-            )}
+                {downloadingId === "orig" ? (
+                  <Check className="h-3 w-3 text-emerald-500" />
+                ) : (
+                  <Download className="h-3 w-3" />
+                )}
+                <span>Download</span>
+              </button>
+              {originalSrc && (
+                <a
+                  href={originalSrc}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-zinc-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                  title="Open in new tab"
+                >
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+              )}
+            </div>
           </div>
 
           <div className="relative aspect-square w-full bg-black flex items-center justify-center overflow-hidden group">
@@ -118,6 +193,14 @@ export function VisualizationsGallery({
               }}
               className="h-full w-full object-contain"
             />
+            {/* Quick hover download button */}
+            <button
+              onClick={() => handleDownload(originalSrc || backendOriginalUrl, "chest_xray_original.png", "orig")}
+              className="absolute bottom-3 right-3 p-2 rounded-xl bg-black/70 hover:bg-black text-white backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+              title="Download image"
+            >
+              <Download className="h-4 w-4" />
+            </button>
           </div>
 
           <div className="p-3.5 text-xs text-zinc-600 dark:text-zinc-400 bg-white dark:bg-zinc-900/60 flex-1 flex flex-col justify-between">
@@ -135,15 +218,29 @@ export function VisualizationsGallery({
                 <Layers className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                 2. Lung Segmentation
               </span>
-              <a
-                href={segmentationUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
-              >
-                <span>Full PNG</span>
-                <ExternalLink className="h-3 w-3" />
-              </a>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => handleDownload(segmentationUrl, "chest_xray_lung_segmentation.png", "seg")}
+                  className="inline-flex items-center gap-1 rounded-md bg-white dark:bg-zinc-800 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 transition-colors shadow-2xs"
+                  title="Download segmentation overlay"
+                >
+                  {downloadingId === "seg" ? (
+                    <Check className="h-3 w-3 text-emerald-500" />
+                  ) : (
+                    <Download className="h-3 w-3" />
+                  )}
+                  <span>Download</span>
+                </button>
+                <a
+                  href={segmentationUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
+                  title="Open in new tab"
+                >
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+              </div>
             </div>
 
             <div className="relative aspect-square w-full bg-black flex items-center justify-center overflow-hidden group">
@@ -153,6 +250,14 @@ export function VisualizationsGallery({
                 alt="Lung Segmentation Overlay"
                 className="h-full w-full object-contain"
               />
+              {/* Quick hover download button */}
+              <button
+                onClick={() => handleDownload(segmentationUrl, "chest_xray_lung_segmentation.png", "seg")}
+                className="absolute bottom-3 right-3 p-2 rounded-xl bg-black/70 hover:bg-black text-white backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                title="Download segmentation overlay"
+              >
+                <Download className="h-4 w-4" />
+              </button>
             </div>
 
             <div className="p-3.5 text-xs text-zinc-600 dark:text-zinc-400 bg-white dark:bg-zinc-900/60 flex-1 flex flex-col justify-between">
@@ -171,15 +276,29 @@ export function VisualizationsGallery({
                 <Sparkles className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400" />
                 3. Grad-CAM Explainability
               </span>
-              <a
-                href={gradcamUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1 text-[11px] font-semibold text-purple-600 dark:text-purple-400 hover:underline"
-              >
-                <span>Full PNG</span>
-                <ExternalLink className="h-3 w-3" />
-              </a>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => handleDownload(gradcamUrl, `chest_xray_gradcam_${predictedClass}.png`, "cam")}
+                  className="inline-flex items-center gap-1 rounded-md bg-white dark:bg-zinc-800 border border-purple-200 dark:border-purple-800 px-2 py-0.5 text-[11px] font-semibold text-purple-700 dark:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-950/50 transition-colors shadow-2xs"
+                  title="Download Grad-CAM overlay"
+                >
+                  {downloadingId === "cam" ? (
+                    <Check className="h-3 w-3 text-emerald-500" />
+                  ) : (
+                    <Download className="h-3 w-3" />
+                  )}
+                  <span>Download</span>
+                </button>
+                <a
+                  href={gradcamUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-purple-600 dark:text-purple-400 hover:underline"
+                  title="Open in new tab"
+                >
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+              </div>
             </div>
 
             <div className="relative aspect-square w-full bg-black flex items-center justify-center overflow-hidden group">
@@ -189,6 +308,14 @@ export function VisualizationsGallery({
                 alt="Grad-CAM Activation Heatmap Overlay"
                 className="h-full w-full object-contain"
               />
+              {/* Quick hover download button */}
+              <button
+                onClick={() => handleDownload(gradcamUrl, `chest_xray_gradcam_${predictedClass}.png`, "cam")}
+                className="absolute bottom-3 right-3 p-2 rounded-xl bg-black/70 hover:bg-black text-white backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                title="Download Grad-CAM overlay"
+              >
+                <Download className="h-4 w-4" />
+              </button>
             </div>
 
             <div className="p-3.5 text-xs text-zinc-600 dark:text-zinc-400 bg-white dark:bg-zinc-900/60 flex-1 flex flex-col justify-between">

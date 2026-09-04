@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { X, FileText, CheckCircle2 } from "lucide-react";
+import { X, FileText, CheckCircle2, Download } from "lucide-react";
 
 interface ImagePreviewProps {
   file: File;
@@ -53,6 +53,15 @@ export function ImagePreview({ file, previewUrl, onRemove, disabled = false }: I
           </div>
 
           <div className="mt-4 flex items-center justify-center sm:justify-start gap-3">
+            <a
+              href={previewUrl}
+              download={file.name || "chest_xray.png"}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-1.5 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700/60 transition-colors"
+              title="Download selected image"
+            >
+              <Download className="h-3.5 w-3.5" />
+              <span>Download</span>
+            </a>
             <button
               onClick={onRemove}
               disabled={disabled}
