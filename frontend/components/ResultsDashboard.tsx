@@ -69,6 +69,7 @@ export function ResultsDashboard({
         originalPreviewUrl={originalPreviewUrl}
         visualizations={result.visualizations}
         predictedClass={result.classification.predicted_class}
+        requestId={result.request_id}
       />
 
       {/* Technical Metadata */}

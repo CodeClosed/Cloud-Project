@@ -3,19 +3,21 @@
 import React, { useState } from "react";
 import { VisualizationsResult } from "@/lib/types";
 import { getVisualizationUrl } from "@/lib/api";
-import { ExternalLink, Layers, Eye, Sparkles, Download, Check, ArrowDownToLine } from "lucide-react";
-import { downloadImageToLaptop } from "@/lib/download";
+import { ExternalLink, Layers, Eye, Sparkles, Download, Check, Archive, FileArchive } from "lucide-react";
+import { downloadImageToLaptop, downloadImagesAsZip } from "@/lib/download";
 
 interface VisualizationsGalleryProps {
   originalPreviewUrl: string;
   visualizations: VisualizationsResult;
   predictedClass: string;
+  requestId?: string;
 }
 
 export function VisualizationsGallery({
   originalPreviewUrl,
   visualizations,
   predictedClass,
+  requestId,
 }: VisualizationsGalleryProps) {
   const [activeTab, setActiveTab] = useState<"all" | "segmentation" | "gradcam">("all");
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
@@ -44,21 +46,24 @@ export function VisualizationsGallery({
     }
   };
 
-  const handleDownloadAll = async () => {
+  const handleDownloadAllZip = async () => {
     const items = [
-      { url: originalSrc || backendOriginalUrl, name: "chest_xray_original.png", id: "all_orig" },
-      { url: segmentationUrl, name: "chest_xray_segmentation.png", id: "all_seg" },
-      { url: gradcamUrl, name: `chest_xray_gradcam_${predictedClass}.png`, id: "all_cam" },
-    ];
-    setDownloadingId("all");
-    for (let i = 0; i < items.length; i++) {
-      if (items[i].url) {
-        await handleDownload(items[i].url, items[i].name, items[i].id);
-        // Small delay between programmatic downloads
-        await new Promise((resolve) => setTimeout(resolve, 300));
-      }
+      { url: originalSrc || backendOriginalUrl, filename: "1_original_radiograph.png" },
+      { url: segmentationUrl, filename: "2_lung_segmentation.png" },
+      { url: gradcamUrl, filename: `3_gradcam_explainability_${predictedClass}.png` },
+    ].filter((item) => Boolean(item.url));
+
+    setDownloadingId("zip");
+    try {
+      const zipName = requestId
+        ? `chest_xray_analysis_${requestId.slice(0, 8)}.zip`
+        : "chest_xray_analysis.zip";
+      await downloadImagesAsZip(items, zipName);
+    } catch (err) {
+      console.error("Failed to download ZIP bundle:", err);
+    } finally {
+      setTimeout(() => setDownloadingId(null), 1500);
     }
-    setDownloadingId(null);
   };
 
   return (
@@ -76,20 +81,25 @@ export function VisualizationsGallery({
           </div>
         </div>
 
-        {/* Action Controls: Download All & Filter Tabs */}
+        {/* Action Controls: Download ZIP Bundle & Filter Tabs */}
         <div className="flex flex-wrap items-center gap-3">
           <button
-            onClick={handleDownloadAll}
-            disabled={downloadingId === "all"}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-200 shadow-sm hover:border-blue-300 dark:hover:border-blue-700 hover:text-blue-600 dark:hover:text-blue-400 transition-all"
-            title="Download all 3 images"
+            onClick={handleDownloadAllZip}
+            disabled={downloadingId === "zip"}
+            className="inline-flex items-center gap-1.5 rounded-xl border border-blue-200 dark:border-blue-900/50 bg-blue-50/70 dark:bg-blue-950/40 px-3.5 py-1.5 text-xs font-bold text-blue-700 dark:text-blue-300 shadow-2xs hover:bg-blue-100 dark:hover:bg-blue-900/60 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
+            title="Download all 3 images in a single .zip archive directly to your laptop"
           >
-            {downloadingId === "all" ? (
-              <Check className="h-3.5 w-3.5 text-emerald-500" />
+            {downloadingId === "zip" ? (
+              <>
+                <Check className="h-3.5 w-3.5 text-emerald-500 animate-pulse" />
+                <span>Creating ZIP...</span>
+              </>
             ) : (
-              <ArrowDownToLine className="h-3.5 w-3.5 text-blue-500" />
+              <>
+                <Archive className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                <span>Download All (.zip)</span>
+              </>
             )}
-            <span>{downloadingId === "all" ? "Downloading..." : "Download All (3)"}</span>
           </button>
 
           {/* Filter / View Tabs */}
