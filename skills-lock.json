@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "skills": {
+    "accessibility-compliance-accessibility-audit": {
+      "source": "rmyndharis/antigravity-skills",
+      "sourceType": "github",
+      "skillPath": "skills/accessibility-compliance-accessibility-audit/SKILL.md",
+      "computedHash": "88ca8b1875ecff37447776baa519f3f2bd309fd9936395b081e2f0136011dc94"
+    },
+    "api-design-principles": {
+      "source": "rmyndharis/antigravity-skills",
+      "sourceType": "github",
+      "skillPath": "skills/api-design-principles/SKILL.md",
+      "computedHash": "cfdd3b4c1412f34f2fb6ee6c3e9fce721ea3a1624d4e3b2e3aa4db21b13ed721"
+    },
+    "e2e-testing-patterns": {
+      "source": "rmyndharis/antigravity-skills",
+      "sourceType": "github",
+      "skillPath": "skills/e2e-testing-patterns/SKILL.md",
+      "computedHash": "84b3e351cea3a265b9a6f43b818fc8018aa1c2ddf9e069e681ce5b6a474b5843"
+    },
+    "fastapi-pro": {
+      "source": "rmyndharis/antigravity-skills",
+      "sourceType": "github",
+      "skillPath": "skills/fastapi-pro/SKILL.md",
+      "computedHash": "7d0137467a120b4121c68453e6fe63a6d429cef1e2c347c83df60c095a857de0"
+    },
+    "frontend-developer": {
+      "source": "rmyndharis/antigravity-skills",
+      "sourceType": "github",
+      "skillPath": "skills/frontend-developer/SKILL.md",
+      "computedHash": "a5e913546be2ecc6769d44034d35bde367fe7f9fb5712b7d4121c17b0c5df92a"
+    },
+    "full-stack-orchestration-full-stack-feature": {
+      "source": "rmyndharis/antigravity-skills",
+      "sourceType": "github",
+      "skillPath": "skills/full-stack-orchestration-full-stack-feature/SKILL.md",
+      "computedHash": "3bdebbefb2d197904b6b028673a216429657f84ca755c7b44c518cb26287d5a3"
+    },
+    "nextjs-react-typescript": {
+      "source": "mindrally/skills",
+      "sourceType": "github",
+      "skillPath": "nextjs-react-typescript/SKILL.md",
+      "computedHash": "52067402daf8388ba7970478e0ba1f350f1868a65a62ae2bf6f4dc1ac3cf3e88"
+    },
+    "tailwind-design-system": {
+      "source": "rmyndharis/antigravity-skills",
+      "sourceType": "github",
+      "skillPath": "skills/tailwind-design-system/SKILL.md",
+      "computedHash": "b05ff736f220ac495164cc50836dc9fcc9f0608111e3a9fcff7ae68cb5dbeab3"
+    },
+    "typescript-advanced-types": {
+      "source": "rmyndharis/antigravity-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typescript-advanced-types/SKILL.md",
+      "computedHash": "8d911cfead3cfe8ac5169f41afcffec90d041983e2369e435ed76f2b3aa14554"
+    },
+    "ui-ux-designer": {
+      "source": "rmyndharis/antigravity-skills",
+      "sourceType": "github",
+      "skillPath": "skills/ui-ux-designer/SKILL.md",
+      "computedHash": "a03cd55c9300699bd5aeee986abc576384f579eeed56d3fd8d7124654eea5485"
+    },
+    "vercel-development": {
+      "source": "mindrally/skills",
+      "sourceType": "github",
+      "skillPath": "vercel-development/SKILL.md",
+      "computedHash": "89b2a41c0b840b925096257dab219203777e2a83bd10ea135aebc5108b875c00"
+    }
+  }
+}
