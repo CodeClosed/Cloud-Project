@@ -1,4 +1,4 @@
-# Chest X-Ray AI Analysis & Visualization API
+# Dual Branch AI for Chest X-Ray Analysis System API
 
 An end-to-end medical AI inference service and FastAPI application designed for multi-modal chest radiograph analysis. The platform combines deep learning classification, deep learning lung anatomical segmentation, gradient-weighted class activation mapping (Grad-CAM), and static visual overlay generation.
 

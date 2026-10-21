@@ -1,0 +1,11 @@
+{
+  "name": "dual-branch-ai-chest-xray",
+  "version": "1.0.0",
+  "description": "Dual Branch AI for Chest X-Ray Analysis System",
+  "private": true,
+  "scripts": {
+    "dev": "python run.py",
+    "start": "python run.py",
+    "dev:no-browser": "python run.py --no-browser"
+  }
+}

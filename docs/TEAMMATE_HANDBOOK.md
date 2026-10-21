@@ -1,6 +1,6 @@
-# 👥 Teammate Onboarding & Operational Handbook
+# 👥 Teammate Onboarding & Operational Handbook: Dual Branch AI for Chest X-Ray Analysis System
 
-Welcome to the **Chest X-Ray AI Analysis & Visualization** project! This handbook is the primary reference manual for you to get up to speed in 5 minutes, run inference, test endpoints, retrieve images, and safely make modifications.
+Welcome to the **Dual Branch AI for Chest X-Ray Analysis System** project! This handbook is the primary reference manual for you to get up to speed in 5 minutes, run inference, test endpoints, retrieve images, and safely make modifications.
 
 ---
 

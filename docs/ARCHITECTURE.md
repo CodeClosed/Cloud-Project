@@ -1,6 +1,6 @@
-# System Architecture & Component Design
+# System Architecture & Component Design: Dual Branch AI for Chest X-Ray Analysis System
 
-This document details the architectural principles, data flow, component interactions, and resource management strategies of the Chest X-Ray AI Analysis & Visualization platform.
+This document details the architectural principles, data flow, component interactions, and resource management strategies of the Dual Branch AI for Chest X-Ray Analysis System platform.
 
 ---
 

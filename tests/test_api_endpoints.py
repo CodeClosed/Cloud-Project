@@ -13,13 +13,14 @@ from api.main import app, VISUALIZATIONS_DIR
 client = TestClient(app)
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-SAMPLE_IMAGE = PROJECT_ROOT / "0a7faa2a.png"
+_vis_samples = list((PROJECT_ROOT / "generated_visualizations").glob("*_original.png"))
+SAMPLE_IMAGE = _vis_samples[0] if _vis_samples else (PROJECT_ROOT / "0a7faa2a.png")
 
 def test_root_endpoint():
     response = client.get("/")
     assert response.status_code == 200
     data = response.json()
-    assert data["message"] == "Chest X-Ray AI API is running"
+    assert data["message"] == "Dual Branch AI for Chest X-Ray Analysis System API is running"
     assert "docs" in data
 
 def test_health_endpoint():

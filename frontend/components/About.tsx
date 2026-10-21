@@ -17,7 +17,7 @@ export function About() {
 
           <div className="rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/80 p-6 sm:p-8 shadow-sm space-y-4 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
             <p>
-              The <strong>Chest X-Ray AI Analysis System</strong> integrates deep learning classification and semantic segmentation to assist researchers and clinicians in radiographic image evaluation.
+              The <strong>Dual Branch AI for Chest X-Ray Analysis System</strong> integrates deep learning classification and semantic segmentation to assist researchers and clinicians in radiographic image evaluation.
             </p>
 
             <h4 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2 pt-2">

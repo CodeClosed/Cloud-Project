@@ -77,10 +77,10 @@ ALLOWED_SUFFIXES = {
 # =============================================================================
 
 app = FastAPI(
-    title="Chest X-Ray AI API",
+    title="Dual Branch AI for Chest X-Ray Analysis System API",
     description=(
-        "API for chest X-ray classification, "
-        "lung segmentation metadata, and Grad-CAM explainability analysis."
+        "API for Dual Branch AI for Chest X-Ray Analysis System "
+        "(classification, lung segmentation metadata, and Grad-CAM explainability analysis)."
     ),
     version="1.0.0"
 )
@@ -154,7 +154,7 @@ def make_json_safe(value: Any):
 @app.get("/")
 def root():
     return {
-        "message": "Chest X-Ray AI API is running",
+        "message": "Dual Branch AI for Chest X-Ray Analysis System API is running",
         "docs": "/docs",
         "version": "1.0.0"
     }
@@ -317,10 +317,12 @@ async def predict_chest_xray(
         raise
 
     except Exception as error:
+        import traceback
+        traceback.print_exc()
         raise HTTPException(
             status_code=500,
             detail=(
-                "Inference processing failed. Please verify the image and try again."
+                f"Inference processing failed: {str(error)}"
             )
         )
 

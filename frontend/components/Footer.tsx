@@ -12,7 +12,7 @@ export function Footer() {
             </div>
             <div>
               <span className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
-                Chest X-Ray AI
+                Dual Branch AI for Chest X-Ray Analysis System
               </span>
               <p className="text-xs text-zinc-500 dark:text-zinc-400">
                 Full-Stack Machine Learning Radiography System

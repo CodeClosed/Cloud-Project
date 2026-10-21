@@ -1,6 +1,6 @@
-# REST API Reference Manual
+# REST API Reference Manual: Dual Branch AI for Chest X-Ray Analysis System
 
-The Chest X-Ray AI API exposes endpoints for running inference, checking service health, and retrieving static visual explainability assets.
+The Dual Branch AI for Chest X-Ray Analysis System API exposes endpoints for running inference, checking service health, and retrieving static visual explainability assets.
 
 * **Base URL:** `http://127.0.0.1:8000`
 * **Interactive OpenAPI (Swagger) UI:** `http://127.0.0.1:8000/docs`

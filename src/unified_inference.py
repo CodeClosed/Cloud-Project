@@ -1,6 +1,6 @@
 
 """
-Persistent unified inference module for the Chest X-Ray Adaptive Framework.
+Persistent unified inference module for Dual Branch AI for Chest X-Ray Analysis System.
 
 Provides:
     analyze_chest_xray(image_path)

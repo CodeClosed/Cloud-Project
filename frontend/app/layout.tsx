@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Chest X-Ray AI — AI-Assisted Radiography Analysis & Explainability",
+  title: "Dual Branch AI for Chest X-Ray Analysis System",
   description:
-    "Production-grade chest X-ray deep learning application combining EfficientNetB0 classification, U-Net lung segmentation, and Grad-CAM visual explainability.",
+    "Production-grade deep learning application combining EfficientNetB0 classification, U-Net lung segmentation, and Grad-CAM visual explainability.",
 };
 
 export default function RootLayout({

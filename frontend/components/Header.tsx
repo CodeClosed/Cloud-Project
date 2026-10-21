@@ -47,17 +47,17 @@ export function Header({
           className="flex items-center gap-3 cursor-pointer group"
           role="button"
           tabIndex={0}
-          aria-label="Chest X-Ray AI Home"
+          aria-label="Dual Branch AI for Chest X-Ray Analysis System Home"
         >
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-cyan-600 to-blue-600 text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
             <Activity className="h-5 w-5" />
           </div>
           <div>
             <span className="text-lg font-bold tracking-tight text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5">
-              Chest X-Ray <span className="text-blue-600 dark:text-blue-400">AI</span>
+              Dual Branch <span className="text-blue-600 dark:text-blue-400">AI</span>
             </span>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium hidden sm:block">
-              AI-assisted chest radiograph diagnostics
+              Chest X-Ray Analysis System
             </p>
           </div>
         </div>

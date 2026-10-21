@@ -7,11 +7,11 @@ export function Hero() {
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
         <div className="inline-flex items-center gap-2 rounded-full border border-blue-200/60 bg-blue-50/80 px-3.5 py-1 text-xs font-semibold text-blue-700 dark:border-blue-900/60 dark:bg-blue-950/50 dark:text-blue-300 mb-6 shadow-sm">
           <Sparkles className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
-          <span>Two-Model Deep Learning Pipeline</span>
+          <span>Dual Branch Deep Learning Pipeline</span>
         </div>
 
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50 max-w-3xl mx-auto leading-tight">
-          AI-Assisted Chest X-Ray Analysis & Explainability
+          Dual Branch AI for Chest X-Ray Analysis System
         </h1>
 
         <p className="mt-4 text-base sm:text-lg text-zinc-600 dark:text-zinc-300 max-w-2xl mx-auto leading-relaxed">

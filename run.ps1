@@ -1,7 +1,11 @@
-# Launcher for Chest X-Ray AI Full-Stack App
-$PythonBin = Join-Path $PSScriptRoot ".venv\Scripts\python.exe"
-if (Test-Path $PythonBin) {
-    & $PythonBin (Join-Path $PSScriptRoot "dev.py")
+$Host.UI.RawUI.WindowTitle = "Dual Branch AI for Chest X-Ray Analysis System Launcher"
+$projectRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+Set-Location $projectRoot
+
+$python = if (Test-Path ".\.venv\Scripts\python.exe") {
+    ".\.venv\Scripts\python.exe"
 } else {
-    python (Join-Path $PSScriptRoot "dev.py")
+    "python"
 }
+
+& $python run.py @args

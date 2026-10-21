@@ -1,6 +1,6 @@
-# Developer & Contributor Guide
+# Developer & Contributor Guide: Dual Branch AI for Chest X-Ray Analysis System
 
-This guide is designed for teammates and future developers maintaining, testing, or extending the Chest X-Ray AI Analysis & Visualization project.
+This guide is designed for teammates and future developers maintaining, testing, or extending the Dual Branch AI for Chest X-Ray Analysis System project.
 
 ---
 
