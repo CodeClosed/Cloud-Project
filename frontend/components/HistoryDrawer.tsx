@@ -15,6 +15,7 @@ import {
   FileText
 } from "lucide-react";
 import { HistoryItem, clearAllHistory, deleteFromHistory } from "@/lib/storage";
+import { getVisualizationUrl } from "@/lib/api";
 
 interface HistoryDrawerProps {
   isOpen: boolean;
@@ -197,6 +198,12 @@ export function HistoryDrawer({
           ) : (
             filteredItems.map((item) => {
               const clf = item.result.classification;
+              const thumbnailSrc = item.previewUrl && !item.previewUrl.startsWith("data:") && !item.previewUrl.startsWith("blob:")
+                ? item.previewUrl
+                : item.result.visualizations?.original_image_url
+                  ? getVisualizationUrl(item.result.visualizations.original_image_url)
+                  : undefined;
+
               return (
                 <div
                   key={item.id}
@@ -207,12 +214,12 @@ export function HistoryDrawer({
                   className="group relative flex items-center justify-between rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/80 p-3 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-md transition-all cursor-pointer"
                 >
                   <div className="flex items-center gap-3 overflow-hidden">
-                    {/* Thumbnail if previewUrl exists, or icon */}
+                    {/* Thumbnail if thumbnailSrc exists, or icon */}
                     <div className="relative h-12 w-12 rounded-lg bg-zinc-950 overflow-hidden border border-zinc-200 dark:border-zinc-800 shrink-0 flex items-center justify-center">
-                      {item.previewUrl ? (
+                      {thumbnailSrc ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
-                          src={item.previewUrl}
+                          src={thumbnailSrc}
                           alt={item.filename}
                           className="h-full w-full object-cover"
                         />
